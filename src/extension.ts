@@ -1,5 +1,6 @@
 import * as vscode from 'vscode';
-import { detectFramework, fetchPackageNamesFromKeyword, Frameworks, Package } from './functions';
+import { addDependency, detectFramework, fetchPackageNamesFromKeyword, Frameworks, Package, PackageQuickPickItem } from './functions';
+import { exec } from 'child_process';
 
 export async function activate(context: vscode.ExtensionContext) {
 	const workspaceFolder = vscode.workspace.workspaceFolders?.[0];
@@ -14,15 +15,21 @@ export async function activate(context: vscode.ExtensionContext) {
 
 		const packages = await fetchPackageNamesFromKeyword(framework, value);
 
-		quickPick.items = packages.map(pkg => ({
+		quickPick.items = packages.map((pkg): PackageQuickPickItem => ({
 			label: pkg.name,
-			description: pkg.version === "unkno	wn" ? "" : pkg.version,
-			detail: pkg.url
+			description: pkg.version === "unknown" ? "" : pkg.version,
+			detail: pkg.url,
+			pkg: pkg
 		}));
 	});
 
-	quickPick.onDidAccept((val) => {
-		
+	quickPick.onDidAccept(async () => {
+		quickPick.dispose();
+		await addDependency(
+			framework,
+			(quickPick.selectedItems[0] as PackageQuickPickItem).pkg,
+			workspaceFolder!.uri.fsPath
+		);
 	});
 
 	context.subscriptions.push(

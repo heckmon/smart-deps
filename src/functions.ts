@@ -234,23 +234,23 @@ async function runInstallCommand(
         },
         () => {
             return new Promise((resolve, reject) => {
+              const shell = buildShellCommand(command);
+              exec(
+                `${shell.shell} ${shell.command}`,
+                  { cwd },
+                  (error, stdout, stderr) => {
+                      if (error) {
+                          const reason = stderr || stdout || error.message;
+                          vscode.window.showErrorMessage(`Failed installing ${packageName}\n${reason}`);
+                          reject(error);
+                          return;
+                      }
 
-                exec(
-                    command,
-                    { cwd },
-                    (error, stdout, stderr) => {
-                        if (error) {
-                            const reason = stderr || stdout || error.message;
-                            vscode.window.showErrorMessage(`Failed installing ${packageName}\n${reason}`);
-                            reject(error);
-                            return;
-                        }
+                      vscode.window.showInformationMessage(`${packageName} installed successfully`);
 
-                        vscode.window.showInformationMessage(`${packageName} installed successfully`);
-
-                        resolve();
-                    }
-                );
+                      resolve();
+                  }
+              );
 
             });
         }
@@ -266,194 +266,116 @@ async function addDependency(
     switch (framework) {
 
         case Frameworks.NPM:
-            runInstallCommand(
-                `npm install ${pkg.name}`,
-                projectPath,
-                pkg.name
-            );
-            exec;
-            break;
-
+          await runInstallCommand(`npm install ${pkg.name}`, projectPath, pkg.name);
+          break;
 
         case Frameworks.DENO:
-            runInstallCommand(
-                `deno add ${pkg.name}`,
-                projectPath,
-                pkg.name
-            );
-            break;
-
+          await runInstallCommand(`deno add ${pkg.name}`, projectPath, pkg.name);
+          break;
 
         case Frameworks.BUN:
-            runInstallCommand(
-                `bun add ${pkg.name}`,
-                projectPath,
-                pkg.name
-            );
-            break;
-
+          await runInstallCommand(`bun add ${pkg.name}`, projectPath, pkg.name);
+          break;
 
         case Frameworks.PUB:
-            runInstallCommand(
-                `flutter pub add ${pkg.name}`,
-                projectPath,
-                pkg.name
-            );
-            break;
-
+          await runInstallCommand(`flutter pub add ${pkg.name}`, projectPath, pkg.name);
+          break;
 
         case Frameworks.PYPI:
-            runInstallCommand(
-                `pip install ${pkg.name}`,
-                projectPath,
-                pkg.name
-            );
-            break;
-
+          await runInstallCommand(`pip install ${pkg.name}`, projectPath, pkg.name);
+          break;
 
         case Frameworks.CARGO:
-            runInstallCommand(
-                `cargo add ${pkg.name}`,
-                projectPath,
-                pkg.name
-            );
-            break;
-
+          await runInstallCommand(`cargo add ${pkg.name}`, projectPath, pkg.name);
+          break;
 
         case Frameworks.MAVEN: {
             const pom = path.join(projectPath, "pom.xml");
-
             const content = await fs.readFile(pom, "utf8");
-
             const parsed = await parseStringPromise(content);
 
             if (!parsed.project.dependencies) {
-                parsed.project.dependencies = [
-                    { dependency: [] }
-                ];
+              parsed.project.dependencies = [{ dependency: [] }];
             }
 
-            const parts =
-                pkg.name.split(":");
+            const parts = pkg.name.split(":");
 
-            parsed.project.dependencies[0]
-                .dependency.push({
-                    groupId: [parts[0]],
-                    artifactId: [parts[1]],
-                    version: [pkg.version]
-                });
+            parsed.project.dependencies[0].dependency.push({
+              groupId: [parts[0]],
+              artifactId: [parts[1]],
+              version: [pkg.version]
+            });
 
             const builder = new Builder();
-
             await fs.writeFile(pom, builder.buildObject(parsed));
-
             break;
         }
 
-
         case Frameworks.GRADLE: {
-            const gradle =
-                path.join(
-                    projectPath,
-                    "build.gradle"
-                );
+            const gradle = path.join(
+              projectPath,
+              "build.gradle"
+            );
 
             let content = await fs.readFile(gradle, "utf8");
-
             content += `\ndependencies {\n implementation '${pkg.name}:${pkg.version}'\n}\n`;
-
             await fs.writeFile(gradle, content);
-
             break;
         }
 
 
         case Frameworks.NUGET:
-            runInstallCommand(
-                `dotnet add package ${pkg.name}`,
-                projectPath,
-                pkg.name
-            );
-            break;
-
+          await runInstallCommand(`dotnet add package ${pkg.name}`, projectPath, pkg.name);
+          break;
 
         case Frameworks.COMPOSER:
-            runInstallCommand(
-                `composer require ${pkg.name}`,
-                projectPath,
-                pkg.name
-            );
-            break;
-
+          await runInstallCommand(`composer require ${pkg.name}`, projectPath, pkg.name);
+          break;
 
         case Frameworks.GEM:
-            runInstallCommand(
-                `bundle add ${pkg.name}`,
-                projectPath,
-                pkg.name
-            );
-            break;
-
+          await runInstallCommand(`bundle add ${pkg.name}`, projectPath, pkg.name);
+          break;
 
         case Frameworks.GO_MODULES:
-            runInstallCommand(
-                `go get ${pkg.name}`,
-                projectPath,
-                pkg.name
-            );
-            break;
-
+          await runInstallCommand(`go get ${pkg.name}`, projectPath, pkg.name);
+          break;
 
         case Frameworks.SWIFT_PM:
-            runInstallCommand(
-                `swift package add-dependency ${pkg.url}`,
-                projectPath,
-                pkg.name
-            );
-            break;
-
+          await runInstallCommand(`swift package add-dependency ${pkg.url}`, projectPath, pkg.name);
+          break;
 
         case Frameworks.CONAN:
-            runInstallCommand(
-                `conan install ${pkg.name}/${pkg.version}`,
-                projectPath,
-                pkg.name
-            );
-            break;
-
+          await runInstallCommand(`conan install ${pkg.name}/${pkg.version}`, projectPath, pkg.name);
+          break;
 
         case Frameworks.VCPKG:
-            runInstallCommand(
-                `vcpkg install ${pkg.name}`,
-                projectPath,
-                pkg.name
-            );
-            break;
-
+          await runInstallCommand(`vcpkg install ${pkg.name}`, projectPath, pkg.name);
+          break;
 
         case Frameworks.LUAROCKS:
-            runInstallCommand(
-                `luarocks install ${pkg.name}`,
-                projectPath,
-                pkg.name
-            );
-            break;
-
+          await runInstallCommand(`luarocks install ${pkg.name}`, projectPath, pkg.name);
+          break;
 
         case Frameworks.HEX:
-            runInstallCommand(
-                `mix deps.get ${pkg.name}`,
-                projectPath,
-                pkg.name
-            );
-            break;
+          await runInstallCommand(`mix deps.get ${pkg.name}`, projectPath,pkg.name);
+          break;
 
-
-        default:
-            vscode.window.showErrorMessage(
-                "Unsupported framework"
-            );
+        default: vscode.window.showErrorMessage("Unsupported framework");
     }
+}
+
+function buildShellCommand(command: string) {
+    if (process.platform === "win32") {
+        return {
+            shell: "powershell.exe",
+            command: `-Command "${command}"`
+        };
+    }
+
+    return {
+        shell: process.env.SHELL || "/bin/bash",
+        command: `-ic '${command}'`
+    };
 }
 
 enum Frameworks {
@@ -489,4 +411,8 @@ class Package {
     }
 }
 
-export { detectFramework, fetchPackageNamesFromKeyword, Frameworks, Package };
+interface PackageQuickPickItem extends vscode.QuickPickItem {
+    pkg: Package;
+}
+
+export { detectFramework, fetchPackageNamesFromKeyword, addDependency, Frameworks, Package, PackageQuickPickItem };

@@ -2,7 +2,7 @@
   "name": "heckmon-smart-deps",
   "displayName": "Smart Depട",
   "description": "A universal dependency manager that auto detects languages and frameworks.",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "publisher": "heckmon",
   "icon": "images/logo.png",
   "repository": {

@@ -268,7 +268,11 @@ async function fetchPackageNamesFromKeyword(framework: Frameworks, keyword: stri
       }
 
       case Frameworks.CARGO: {
-        const response = await fetch(`https://crates.io/api/v1/crates?q=${encodeURIComponent(keyword)}`);
+        const response = await fetch(`https://crates.io/api/v1/crates?q=${encodeURIComponent(keyword)}`, {
+          headers: {
+            "User-Agent": "smart-deps-vscode-extension (github.com/heckmon/smart-deps)"
+          }
+        });
         const json = await response.json();
         return json.crates.map((pkg: any) =>
           new Package(pkg.name, `https://crates.io/crates/${pkg.name}`, pkg.max_version)

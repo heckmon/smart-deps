@@ -12,6 +12,7 @@ import {
 
 export async function activate(context: vscode.ExtensionContext) {
 	const workspaceFolder = vscode.workspace.workspaceFolders?.[0];
+	let timeout: NodeJS.Timeout;
 
 	if (!workspaceFolder) {
         vscode.window.showErrorMessage("Smart Deps requires an open workspace");
@@ -21,19 +22,25 @@ export async function activate(context: vscode.ExtensionContext) {
 	const quickPick = vscode.window.createQuickPick();
 	quickPick.matchOnDetail = true;
 	quickPick.placeholder = "Search package";
+
 	quickPick.onDidChangeValue(async (value) => {
 		const framework = !workspaceFolder ? Frameworks.UNKNOWN : getFramework(context, workspaceFolder.uri.fsPath);
 		if (!value) {
 			return;
 		}
 
-		const packages = await fetchPackageNamesFromKeyword(framework, value);
-		quickPick.items = packages.map((pkg): PackageQuickPickItem => ({
-			label: pkg.name,
-			description: pkg.version === "unknown" ? "" : pkg.version,
-			detail: pkg.url,
-			pkg: pkg
-		}));
+		clearTimeout(timeout);
+
+		timeout = setTimeout(async () => {
+			const packages = await fetchPackageNamesFromKeyword(framework, value);
+			quickPick.items = packages.map((pkg): PackageQuickPickItem => ({
+				label: pkg.name,
+				description: pkg.version === "unknown" ? "" : pkg.version,
+				detail: pkg.url,
+				pkg: pkg
+			}));
+		}, 400);
+
 	});
 
 	quickPick.onDidAccept(async () => {

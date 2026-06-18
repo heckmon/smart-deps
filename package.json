@@ -4,6 +4,10 @@
   "description": "A universal dependency manager that auto detects languages and frameworks.",
   "version": "1.0.0",
   "publisher": "heckmon",
+  "repository": {
+    "type": "git",
+    "url": "https://githib.com/heckmon/smart-deps"
+  },
   "engines": {
     "vscode": "^1.120.0"
   },

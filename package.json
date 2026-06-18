@@ -1,9 +1,10 @@
 {
-  "name": "smart-deps",
-  "displayName": "Smart Deps",
+  "name": "heckmon-smart-deps",
+  "displayName": "Smart Depട",
   "description": "A universal dependency manager that auto detects languages and frameworks.",
   "version": "1.0.0",
   "publisher": "heckmon",
+  "icon": "images/logo.png",
   "repository": {
     "type": "git",
     "url": "https://githib.com/heckmon/smart-deps"

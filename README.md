@@ -17,12 +17,12 @@ examples using npm, pypi, cargo and pub:
 
 <table>
     <tr>
-        <td><img src="https://raw.githubusercontent.com/heckmon/smart-deps/refs/heads/main/gifs/npm.gif" width="100%"/></td>
-        <td><img src="https://raw.githubusercontent.com/heckmon/smart-deps/refs/heads/main/gifs/pypi.gif" width="100%"/></td>
+        <td><img src="https://raw.githubusercontent.com/heckmon/smart-deps/refs/heads/master/gifs/npm.gif" width="100%"/></td>
+        <td><img src="https://raw.githubusercontent.com/heckmon/smart-deps/refs/heads/master/gifs/pypi.gif" width="100%"/></td>
     </tr>
     <tr>
-        <td><img src="https://raw.githubusercontent.com/heckmon/smart-deps/refs/heads/main/gifs/cargo.gif" width="100%"/></td>
-        <td><img src="https://raw.githubusercontent.com/heckmon/smart-deps/refs/heads/main/gifs/pub.gif" width="100%"/></td>
+        <td><img src="https://raw.githubusercontent.com/heckmon/smart-deps/refs/heads/master/gifs/npm.gif" width="100%"/></td>
+        <td><img src="https://raw.githubusercontent.com/heckmon/smart-deps/refs/heads/master/gifs/pub.gif" width="100%"/></td>
     </tr>
         
 </table>

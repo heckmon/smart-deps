@@ -3,6 +3,7 @@
   "displayName": "Smart Deps",
   "description": "A universal dependency manager that auto detects languages and frameworks.",
   "version": "1.0.0",
+  "publisher": "heckmon",
   "engines": {
     "vscode": "^1.120.0"
   },
@@ -16,6 +17,14 @@
       {
         "command": "smart-deps.addDependency",
         "title": "Smart deps: Add dependency"
+      },
+      {
+        "command": "smart-deps.selectFramework",
+        "title": "Smart deps: Select framework/language"
+      },
+      {
+        "command": "smart-deps.resetFramework",
+        "title": "Smart Deps: Reset framework/language"
       }
     ]
   },
@@ -47,6 +56,7 @@
     "typescript-eslint": "^8.56.1"
   },
   "dependencies": {
+    "cheerio": "^1.2.0",
     "xml2js": "^0.6.2"
   }
 }

@@ -1,20 +1,33 @@
 import * as vscode from 'vscode';
-import { addDependency, detectFramework, fetchPackageNamesFromKeyword, Frameworks, Package, PackageQuickPickItem } from './functions';
-import { exec } from 'child_process';
+import {
+	addDependency,
+	getFramework,
+	fetchPackageNamesFromKeyword,
+	Frameworks,
+	PackageQuickPickItem,
+	selectFramework,
+	resetFramework,
+	searchPyPi
+} from './functions';
 
 export async function activate(context: vscode.ExtensionContext) {
 	const workspaceFolder = vscode.workspace.workspaceFolders?.[0];
-	const framework = !workspaceFolder ? Frameworks.UNKNOWN : detectFramework(workspaceFolder.uri.fsPath);
+
+	if (!workspaceFolder) {
+        vscode.window.showErrorMessage("Smart Deps requires an open workspace");
+        return;
+    }
+	
 	const quickPick = vscode.window.createQuickPick();
 	quickPick.matchOnDetail = true;
 	quickPick.placeholder = "Search package";
 	quickPick.onDidChangeValue(async (value) => {
+		const framework = !workspaceFolder ? Frameworks.UNKNOWN : getFramework(context, workspaceFolder.uri.fsPath);
 		if (!value) {
 			return;
 		}
 
 		const packages = await fetchPackageNamesFromKeyword(framework, value);
-
 		quickPick.items = packages.map((pkg): PackageQuickPickItem => ({
 			label: pkg.name,
 			description: pkg.version === "unknown" ? "" : pkg.version,
@@ -24,7 +37,8 @@ export async function activate(context: vscode.ExtensionContext) {
 	});
 
 	quickPick.onDidAccept(async () => {
-		quickPick.dispose();
+		const framework = !workspaceFolder ? Frameworks.UNKNOWN : getFramework(context, workspaceFolder.uri.fsPath);
+		quickPick.hide();
 		await addDependency(
 			framework,
 			(quickPick.selectedItems[0] as PackageQuickPickItem).pkg,
@@ -37,6 +51,21 @@ export async function activate(context: vscode.ExtensionContext) {
 			quickPick.show();
 		}),
 	);
+
+	context.subscriptions.push(
+		vscode.commands.registerCommand("smart-deps.selectFramework", async () => {
+			await selectFramework(context, workspaceFolder.uri.fsPath);
+		})
+	);
+
+	context.subscriptions.push(
+		vscode.commands.registerCommand("smart-deps.resetFramework", async () => {
+			await resetFramework(context);
+		})
+	);
+
+	searchPyPi("").catch(() => {});
+	
 }
 
 export function deactivate() {}

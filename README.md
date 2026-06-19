@@ -13,6 +13,8 @@
 
 #### Auto detects framework/language and install packages directly from the VSCode.
 
+#### VScode marketplace link: https://marketplace.visualstudio.com/items?itemName=heckmon.heckmon-smart-deps
+
 examples using npm, pypi, cargo and pub:
 
 <table>
